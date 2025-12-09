@@ -1,5 +1,5 @@
 import React from 'react';
-import { Radio, ExternalLink, Shield } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { NewsItem } from '../types';
 
 interface NewsFeedProps {
@@ -9,50 +9,43 @@ interface NewsFeedProps {
 
 export const NewsFeed: React.FC<NewsFeedProps> = ({ news, loading }) => {
   return (
-    <div className="glass-panel rounded-xl p-6 h-full flex flex-col border-t-2 border-t-purple-600 shadow-[0_5px_20px_rgba(123,44,191,0.15)] relative overflow-hidden">
-       <div className="absolute top-0 right-0 w-40 h-40 bg-purple-600/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
-
-      <div className="flex items-center justify-between mb-6 relative z-10">
-        <div className="flex items-center gap-3">
-          <Radio className="text-purple-400 w-6 h-6 animate-pulse" />
-          <h3 className="text-xl font-bold text-white">Data Breach News</h3>
-        </div>
-        <span className="text-xs font-mono text-purple-300 bg-purple-900/30 px-2 py-1 rounded border border-purple-500/30">
-          LIVE FEED
-        </span>
+    <div className="flex flex-col h-full animate-slide-up" style={{ animationDelay: '0.1s' }}>
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-2xl font-bold text-white tracking-tight">Intelligence</h3>
+        <span className="text-xs text-neutral-400">Real-time Updates</span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1 overflow-y-auto pr-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
         {loading ? (
            [1, 2, 3, 4].map((i) => (
-             <div key={i} className="animate-pulse bg-white/5 rounded-lg h-40"></div>
+             <div key={i} className="pro-card h-40 animate-pulse bg-neutral-800"></div>
            ))
         ) : (
           news.map((item, index) => (
-            <div key={index} className="bg-gradient-to-b from-white/10 to-transparent p-[1px] rounded-lg">
-              <div className="bg-black/80 h-full rounded-lg p-4 flex flex-col hover:bg-black/60 transition-colors">
-                <div className="flex justify-between items-start mb-2">
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
-                    item.severity === 'Critical' ? 'bg-red-600 text-white' :
-                    item.severity === 'High' ? 'bg-orange-600 text-white' :
-                    'bg-blue-600 text-white'
-                  }`}>
-                    {item.severity.toUpperCase()}
-                  </span>
-                  <span className="text-xs text-gray-500">{item.date}</span>
+            <div key={index} className="pro-card p-6 flex flex-col justify-between group cursor-pointer border border-white/5 hover:border-white/10">
+              
+              <div>
+                <div className="flex justify-between items-start mb-3">
+                  <span className="text-xs font-medium text-neutral-500">{item.date}</span>
+                  <div className={`w-2 h-2 rounded-full ${
+                    item.severity === 'Critical' ? 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]' :
+                    item.severity === 'High' ? 'bg-orange-500' :
+                    item.severity === 'Medium' ? 'bg-yellow-500' :
+                    'bg-blue-500'
+                  }`} />
                 </div>
                 
-                <h4 className="text-purple-200 font-semibold text-sm mb-2 line-clamp-2 leading-tight">
+                <h4 className="text-base font-semibold text-gray-100 mb-2 leading-snug group-hover:text-white transition-colors">
                   {item.title}
                 </h4>
                 
-                <p className="text-gray-400 text-xs line-clamp-3 mb-4 flex-grow">
+                <p className="text-sm text-neutral-400 leading-relaxed">
                   {item.summary}
                 </p>
-                
-                <button className="flex items-center gap-1 text-xs text-purple-400 hover:text-white transition-colors mt-auto self-start">
-                  Read Report <ExternalLink size={10} />
-                </button>
+              </div>
+
+              <div className="mt-4 flex items-center text-xs font-medium text-white opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
+                Read Full Brief <ChevronRight size={12} className="ml-1" />
               </div>
             </div>
           ))

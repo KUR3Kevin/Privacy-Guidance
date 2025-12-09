@@ -1,41 +1,60 @@
 import React from 'react';
-import { Search, Menu, HelpCircle, ShieldAlert } from 'lucide-react';
+import { Shield, Menu } from 'lucide-react';
+import { Page } from '../types';
 
-export const Header: React.FC = () => {
+interface HeaderProps {
+  currentPage: Page;
+  setCurrentPage: (page: Page) => void;
+}
+
+export const Header: React.FC<HeaderProps> = ({ currentPage, setCurrentPage }) => {
+  const navItems: { label: string; value: Page }[] = [
+    { label: 'Overview', value: 'overview' },
+    { label: 'Tools', value: 'tools' },
+    { label: 'Tech News', value: 'news' },
+    { label: 'About', value: 'about' },
+  ];
+
   return (
-    <header className="w-full mb-8 relative z-20">
-      {/* Top Bar container matching sketch */}
-      <div className="glass-panel rounded-2xl p-4 flex items-center justify-between shadow-[0_0_15px_rgba(123,44,191,0.3)] border-t border-white/20">
+    <header className="fixed top-0 left-0 right-0 z-50 pro-glass border-b border-white/10 transition-all duration-300">
+      <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
         
-        {/* Logo Section */}
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-gradient-to-br from-red-600 to-purple-700 rounded-lg shadow-lg shadow-red-500/30">
-            <ShieldAlert className="text-white w-6 h-6" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-wider text-white">
-              GUARDIAN<span className="text-red-500">WEB</span>
-            </h1>
-            <p className="text-xs text-purple-300 tracking-widest uppercase opacity-80">Secure Your Digital Footprint</p>
-          </div>
+        {/* Logo */}
+        <div 
+          onClick={() => setCurrentPage('overview')}
+          className="flex items-center gap-2 cursor-pointer group"
+        >
+          <Shield className="w-5 h-5 text-gray-200 group-hover:text-white transition-colors" />
+          <span className="text-sm font-semibold tracking-tight text-white">GuardianWeb</span>
         </div>
 
-        {/* Address Bar Aesthetic (Optional based on sketch "https://...") */}
-        <div className="hidden md:flex flex-1 mx-8 bg-black/40 rounded-full border border-white/5 px-4 py-2 items-center text-gray-500 text-sm font-mono">
-          <span className="text-green-500 mr-2">https://</span>
-          <span>www.guardianweb.secure/dashboard</span>
-        </div>
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center space-x-1">
+          {navItems.map((item) => (
+            <button
+              key={item.value}
+              onClick={() => setCurrentPage(item.value)}
+              className={`px-4 py-1.5 text-xs font-medium rounded-full transition-all duration-200 ${
+                currentPage === item.value 
+                  ? 'text-white bg-white/10' 
+                  : 'text-neutral-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
+        </nav>
 
-        {/* Right Actions */}
+        {/* Action Button */}
         <div className="flex items-center gap-4">
-          <button className="group p-2 hover:bg-white/10 rounded-full transition-all duration-300">
-            <Search className="w-6 h-6 text-purple-300 group-hover:text-white" />
+          <button 
+            onClick={() => setCurrentPage('tools')}
+            className="bg-white text-black text-xs font-semibold px-4 py-1.5 rounded-full hover:bg-gray-200 transition-colors"
+          >
+            Get Protected
           </button>
-          <button className="group p-2 hover:bg-white/10 rounded-full transition-all duration-300">
-            <Menu className="w-6 h-6 text-purple-300 group-hover:text-white" />
-          </button>
-          <button className="group p-2 hover:bg-white/10 rounded-full transition-all duration-300">
-            <HelpCircle className="w-6 h-6 text-purple-300 group-hover:text-white" />
+          <button className="md:hidden text-white">
+            <Menu size={20} />
           </button>
         </div>
       </div>

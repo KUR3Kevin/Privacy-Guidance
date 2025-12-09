@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GuardianWeb</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         theme: {
@@ -14,23 +14,24 @@
               sans: ['Inter', 'sans-serif'],
             },
             colors: {
-              glossy: {
-                red: '#D90429',
-                purple: '#7B2CBF',
-                black: '#10002B',
-                dark: '#0a0a0a'
+              neutral: {
+                900: '#121212',
+                800: '#1c1c1e',
+                400: '#86868b', // Apple-like gray text
               }
             },
             animation: {
-              'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-              'blob': 'blob 7s infinite',
+              'fade-in': 'fadeIn 0.8s ease-out forwards',
+              'slide-up': 'slideUp 0.8s ease-out forwards',
             },
             keyframes: {
-              blob: {
-                '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-                '100%': { transform: 'translate(0px, 0px) scale(1)' },
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              slideUp: {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
               }
             }
           }
@@ -39,19 +40,44 @@
     </script>
     <style>
       body {
-        background-color: #050505;
-        color: #e5e5e5;
+        background-color: #000000;
+        color: #f5f5f7;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
-      .glass-panel {
-        background: rgba(20, 10, 30, 0.6);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+      
+      /* Apple-style glass */
+      .pro-glass {
+        background: rgba(28, 28, 30, 0.6);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
       }
-      .glossy-text {
-        background: linear-gradient(to right, #ef4444, #a855f7);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+
+      .pro-card {
+        background: #1c1c1e;
+        border-radius: 18px;
+        transition: transform 0.3s ease, background-color 0.3s ease;
+      }
+      
+      .pro-card:hover {
+        background: #2c2c2e;
+        transform: scale(1.01);
+      }
+
+      /* Custom Scrollbar for a cleaner look */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #48484a;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #636366;
       }
     </style>
   <script type="importmap">
