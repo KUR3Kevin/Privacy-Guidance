@@ -7,6 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
+      // POLYFILL: Prevent crashes on Netlify/Browsers where process is undefined
+      window.process = window.process || { env: {} };
+    </script>
+    <script>
       tailwind.config = {
         theme: {
           extend: {
@@ -48,10 +52,16 @@
       
       /* Apple-style glass */
       .pro-glass {
-        background: rgba(28, 28, 30, 0.6);
+        background: rgba(28, 28, 30, 0.85); /* Increased opacity for Firefox/Privacy browsers */
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      @supports not (backdrop-filter: blur(20px)) {
+        .pro-glass {
+          background: #1c1c1e; /* Fallback for browsers blocking glass effects */
+        }
       }
 
       .pro-card {

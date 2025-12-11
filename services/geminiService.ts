@@ -2,7 +2,7 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { DashboardData } from "../types";
 
 // Fallback data reflecting the specific "watchdog" energy user requested
-// UPDATED: Now includes real links and detailed explanations
+// UPDATED: Now includes the specific December 2025 news items requested
 const FALLBACK_DATA: DashboardData = {
   badSites: [
     { 
@@ -44,55 +44,57 @@ const FALLBACK_DATA: DashboardData = {
   ],
   news: [
     { 
-      title: "Tri-Century Eye Care Ransomware", 
-      date: "Dec 7", 
-      source: "Dark Web Wire", 
-      summary: "Pear ransomware group stole 3TB of patient data in a massive breach.", 
-      severity: "Critical",
-      url: "https://www.bleepingcomputer.com",
-      detailedContent: "A significant data breach has struck Tri-Century Eye Care, with the notorious Pear ransomware group claiming responsibility. Reports indicate that over 3TB of sensitive patient data, including medical records and social security numbers, were exfiltrated before systems were locked. Security analysts suggest the entry point was a compromised RDP credential."
+      title: "Google Rolls Out Gemini 3 \"Deep Think\" Mode", 
+      date: "Dec 2025", 
+      source: "9to5Google", 
+      summary: "New capability allows Gemini 3 to explore multiple hypotheses simultaneously for complex reasoning.", 
+      severity: "High",
+      url: "https://blog.google/products/gemini/gemini-3/",
+      detailedContent: "Google has officially released its advanced \"Deep Think\" reasoning mode for Gemini 3 to Ultra subscribers. This new capability allows the model to explore multiple hypotheses simultaneously for complex math, science, and logic problems, effectively bridging the gap between chat and deep reasoning."
     },
     { 
-      title: "Washington Post & Cox Breach", 
+      title: "DeepSeek V3.2 Challenges Global Leaders", 
       date: "This Week", 
-      source: "Cyber Watch", 
-      summary: "Clop ransomware group exploited a zero-day in Oracle systems targeting 20,000+ employees.", 
+      source: "Indian Express", 
+      summary: "New models claim performance metrics that rival GPT-5 and Gemini 3 Pro.", 
       severity: "High",
-      url: "https://krebsonsecurity.com",
-      detailedContent: "The Clop ransomware gang has successfully exploited a zero-day vulnerability in Oracle's E-Business Suite to breach networks at the Washington Post and Cox Enterprises. The attack bypassed traditional perimeter defenses, allowing the threat actors to move laterally and scrape employee payroll data. Patches are now available, but remediation is ongoing."
+      url: "https://indianexpress.com/article/technology/artificial-intelligence/deepseek-unveils-new-ai-models-rivalling-gpt-5-and-gemini-3-pro-10398473/",
+      detailedContent: "Chinese AI startup DeepSeek released its V3.2 and \"Speciale\" models this week, claiming performance metrics that rival or exceed GPT-5 and Gemini 3 Pro. The release highlights a significant leap in open-source reasoning and \"agentic\" capabilities, intensifying the global AI arms race as we head into 2026."
     },
     { 
-      title: "Portmaster v2 Released", 
-      date: "Just Now", 
-      source: "Safing.io", 
-      summary: "Major foundational update now integrated with IVPN for stronger leak protection.", 
+      title: "New US Privacy Laws Effective Jan 1, 2026", 
+      date: "Jan 1, 2026", 
+      source: "Morrison Foerster", 
+      summary: "Laws in CA, IN, KY, and RI go live, mandating stricter data breach notifications.", 
       severity: "Medium",
-      url: "https://safing.io/blog",
-      detailedContent: "Safing has officially released Portmaster v2, a major overhaul of its open-source application firewall. The update introduces SPN (Safing Privacy Network) integration directly into the UI and partners with IVPN for seamless multi-hop connections. This release focuses on preventing DNS leaks and blocking OS-level telemetry with greater granularity."
+      url: "https://www.mofo.com/resources/insights/251205-a-mofo-privacy-minute-q-a-2026",
+      detailedContent: "As of Jan 1, 2026, California's SB 446 (shortening data breach notification timelines) and AB 656 (mandating easier social media account deletion) will take effect. Additionally, new comprehensive consumer privacy laws in Indiana, Kentucky, and Rhode Island will go live, requiring businesses to update privacy policies immediately."
     },
     { 
-      title: "OpenAI 'Code Red'", 
-      date: "Yesterday", 
-      source: "AI Wire", 
-      summary: "Internal alerts regarding potential vulnerabilities in agentic workflows.", 
-      severity: "High",
-      url: "https://wired.com/category/security",
-      detailedContent: "Internal memos leaked from OpenAI suggest a 'Code Red' status regarding new agentic AI workflows. The concern centers on the ability of autonomous agents to execute code in un-sandboxed environments, potentially allowing for unintended privilege escalation on host machines. Developers are urged to implement strict containerization for all AI agents."
-    },
-    { 
-      title: "MCP Data Risks", 
-      date: "2 days ago", 
-      source: "DevSec", 
-      summary: "Model Context Protocols may expose local file systems if not sandboxed.", 
+      title: "2025 Tech Job Cuts Hit Highest Since 2020", 
+      date: "Dec 2025", 
+      source: "HR Executive", 
+      summary: "General tech roles see massive cuts while AI/ML specialized roles grow by 42%.", 
       severity: "Medium",
-      url: "https://github.com/security",
-      detailedContent: "The new Model Context Protocol (MCP) standard, designed to let AI models read local context, has come under scrutiny. Researchers demonstrated that without strict read-only permissions and path whitelisting, a malicious prompt could trick the local server into exposing sensitive configuration files (like .env or .ssh/id_rsa) to the cloud model."
+      url: "https://hrexecutive.com/job-cuts-highest-since-2020-the-real-reasons-why/",
+      detailedContent: "A new report from Challenger, Gray & Christmas reveals that announced job cuts in 2025 have reached their highest point since 2020. However, the market shows a \"paradox\": while general tech roles are being cut, job postings for specialized AI and machine learning roles have grown by over 42% year-over-year."
+    },
+    { 
+      title: "AI \"Agentic\" Platforms Redefine Development", 
+      date: "Dec 2025", 
+      source: "Google Blog", 
+      summary: "Development shifting to platforms where AI writes and executes code autonomously.", 
+      severity: "High", 
+      url: "https://9to5google.com/2025/12/04/gemini-3-deep-think/",
+      detailedContent: "Both Google (with \"Antigravity\") and DeepSeek are shifting focus toward \"Agentic\" development platforms where AI writes and executes code autonomously. This trend suggests that in 2026, software development will move from human-led coding to human-supervised AI architectural design."
     },
   ]
 };
 
 export const fetchDashboardData = async (): Promise<DashboardData> => {
-  const apiKey = process.env.API_KEY;
+  // SAFE KEY ACCESS: This prevents crashes if process.env is undefined in browser (common Netlify issue)
+  const apiKey = (typeof process !== "undefined" && process.env) ? process.env.API_KEY : undefined;
+  
   if (!apiKey) {
     console.warn("No API_KEY found. Using fallback data.");
     return FALLBACK_DATA;
@@ -109,11 +111,17 @@ export const fetchDashboardData = async (): Promise<DashboardData> => {
       
       2. 'tools': List exactly 6 tools with valid download links.
       
-      3. 'news': Generate 5 headlines. 
-         - Must include specific recent events like ransomware attacks or zero-day exploits.
+      3. 'news': Generate 5 headlines. FOCUS ON THESE SPECIFIC STORIES: 
+         - Google Gemini 3 "Deep Think" Mode (High Severity)
+         - DeepSeek V3.2 Challenges Global AI Leaders (High Severity)
+         - New US Privacy Laws Effective Jan 1, 2026 (Medium Severity)
+         - 2025 Tech Job Cuts Hit Highest Level Since 2020 (Medium Severity)
+         - AI "Agentic" Platforms Redefine Development (High Severity)
+         
+         Structure:
          - 'summary': Short 1-sentence overview.
-         - 'detailedContent': A robust paragraph (4-5 sentences) providing deep technical context, attack vectors, or implications.
-         - 'url': A plausible search URL (e.g. google search for the topic) or a specific tech news domain (bleepingcomputer.com, wired.com, etc) relevant to the story.
+         - 'detailedContent': A robust paragraph (3-4 sentences) covering the update.
+         - 'url': Use plausible URLs.
          Severity: Low, Medium, High, Critical.
       
       Return ONLY valid JSON.`,
@@ -174,7 +182,8 @@ export const fetchDashboardData = async (): Promise<DashboardData> => {
     }
     return FALLBACK_DATA;
   } catch (error) {
-    console.error("Gemini API Error:", error);
+    // FALLBACK ON ERROR: If AdBlocker blocks the API request, we return static data immediately.
+    console.error("Gemini API Error or Blocked:", error);
     return FALLBACK_DATA;
   }
 };
