@@ -1,52 +1,39 @@
-# Privacy Guidance 🔒
+# Privacy Guidance
 
-A vibe-coded website dedicated to privacy education and empowering users to protect themselves in the digital age.
+## What This Is
 
-## About
+This is a vibe-coded website built to help people learn about privacy and how to actually protect themselves online. No corporate speak, no BS—just real talk about keeping your data safe.
 
-Privacy Guidance is a passion project built to help people understand and take control of their digital privacy. In an era where data is constantly being collected, tracked, and monetized, this website serves as a resource for learning practical privacy protection techniques and staying informed about the latest developments in tech privacy.
+## Why It Exists
 
-This project embraces the "vibe coding" philosophy—built with creativity, authenticity, and a focus on delivering real value rather than corporate polish. It's about making privacy accessible and understandable for everyone.
+Because privacy matters, and most people don't know where to start. This project is here to make digital privacy accessible and easy to understand. Whether you're just getting started or already privacy-conscious, you'll find practical tips and guidance to level up your protection game.
 
-## What You'll Find Here
+## What You Get
 
-- **Privacy Education**: Learn fundamental concepts about digital privacy and why it matters
-- **Practical Protection Tips**: Actionable advice on how to safeguard your personal information
-- **Latest Privacy News**: Stay updated on tech privacy developments and data protection issues
-- **Guardian Tools**: Resources and guidance for taking control of your digital footprint
+- Learn the basics of digital privacy and why it should matter to you
+- Get actionable steps to protect your personal information
+- Stay updated on the latest privacy news and tech developments
+- Access tools and resources for taking control of your digital life
 
-## Mission
+## The Vibe
 
-To democratize privacy knowledge and provide clear, practical guidance for anyone looking to:
-- Understand how their data is collected and used
-- Implement effective privacy protection measures
-- Stay informed about privacy threats and solutions
-- Take meaningful steps toward digital sovereignty
+This project is coded with intention and built on vibes. It's not polished corporate stuff—it's real, it's honest, and it's focused on actually helping people understand how to protect themselves in a world that's constantly trying to track everything you do.
 
-## Run Locally
+## Running It Locally
 
-**Prerequisites:** Node.js
+Need Node.js installed first.
 
-1. Install dependencies:
-   ```
-   npm install
-   ```
+```bash
+npm install
+npm run dev
+```
 
-2. Run the development server:
-   ```
-   npm run dev
-   ```
-
-3. Open your browser and navigate to the local development URL
+That's it. Open your browser and you're good to go.
 
 ## Contributing
 
-This is a community-focused project. Whether you're a privacy advocate, developer, or someone passionate about digital rights, contributions and feedback are welcome.
-
-## Philosophy
-
-Privacy isn't just about hiding—it's about control, autonomy, and the fundamental right to choose what you share and with whom. This project aims to make that power accessible to everyone, regardless of technical expertise.
+Got ideas? Want to help? This is community-driven. If you care about privacy and want to contribute, you're welcome here.
 
 ---
 
-*Built with intention. Coded with vibes. Focused on privacy.*
+*Vibe-coded for privacy. Built for real people.*
