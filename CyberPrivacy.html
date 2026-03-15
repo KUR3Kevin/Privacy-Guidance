@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghost Protocol: The 80-Point Defense</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #080810;
+            --silver: #c8c8d4;
+            --silver-bright: #e8e8f0;
+            --silver-dim: #888899;
+            --glass: rgba(200, 200, 212, 0.05);
+            --glass-border: rgba(200, 200, 212, 0.15);
+            --accent-glow: rgba(180, 180, 210, 0.25);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+
+        body {
+            background: var(--bg);
+            min-height: 100vh;
+            color: var(--silver);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Water background */
+        .water-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            transition: transform 0.3s ease-out;
+        }
+        .water-bg::before {
+            content: '';
+            position: absolute;
+            width: 200%; height: 200%;
+            top: -50%; left: -50%;
+            background:
+                radial-gradient(ellipse at 30% 20%, rgba(140,140,180,0.07) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(100,100,150,0.05) 0%, transparent 50%);
+            animation: waterFlow 20s ease-in-out infinite alternate;
+        }
+        .water-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                repeating-linear-gradient(0deg, transparent, transparent 80px, rgba(200,200,212,0.012) 80px, rgba(200,200,212,0.012) 81px),
+                repeating-linear-gradient(90deg, transparent, transparent 120px, rgba(200,200,212,0.008) 120px, rgba(200,200,212,0.008) 121px);
+        }
+        @keyframes waterFlow {
+            0% { transform: translate(0,0) rotate(0deg); }
+            100% { transform: translate(-3%, 2%) rotate(0.4deg); }
+        }
+
+        .orb {
+            position: fixed; border-radius: 50%;
+            filter: blur(120px); z-index: -1;
+            animation: orbFloat 25s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+        .orb-1 { width: 600px; height: 600px; top: -200px; left: -200px; background: radial-gradient(circle, rgba(160,160,200,0.1), transparent 70%); }
+        .orb-2 { width: 500px; height: 500px; bottom: -200px; right: -100px; background: radial-gradient(circle, rgba(130,130,170,0.08), transparent 70%); animation-delay: -10s; }
+        @keyframes orbFloat {
+            0% { transform: translate(0,0) scale(1); }
+            100% { transform: translate(25px, -20px) scale(1.05); }
+        }
+
+        /* Nav */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            padding: 1.1rem 6%;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(8,8,16,0.75);
+            backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem; font-weight: 700; letter-spacing: 3px;
+            background: linear-gradient(135deg, #888899, #e8e8f0, #888899);
+            background-size: 200% auto;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: shimmer 4s linear infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+        .nav-right {
+            font-size: 0.72rem; letter-spacing: 3px; text-transform: uppercase;
+            color: var(--silver-dim);
+        }
+
+        /* Main */
+        .container { max-width: 1140px; margin: 0 auto; padding: 110px 24px 80px; }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem 3rem;
+            margin-bottom: 3.5rem;
+            position: relative;
+        }
+        .hero::before {
+            content: '';
+            position: absolute; inset: 0;
+            border: 1px solid var(--glass-border);
+            border-radius: 4px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+        }
+        .hero-inner { position: relative; z-index: 1; }
+        .hero-label {
+            font-size: 0.65rem; letter-spacing: 6px;
+            text-transform: uppercase; color: var(--silver-dim);
+            margin-bottom: 1.2rem;
+        }
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            font-weight: 700; line-height: 1.1; letter-spacing: -1px;
+            color: var(--silver-bright); margin-bottom: 0.8rem;
+        }
+        .hero-line {
+            width: 50px; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--silver), transparent);
+            margin: 1.2rem auto;
+        }
+        .hero-sub { font-size: 0.9rem; color: var(--silver-dim); font-weight: 300; letter-spacing: 1px; }
+
+        /* Chapter Select Grid */
+        .chapters-label {
+            font-size: 0.65rem; letter-spacing: 5px; text-transform: uppercase;
+            color: var(--silver-dim); text-align: center; margin-bottom: 1.5rem;
+        }
+
+        .chapters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 14px;
+            margin-bottom: 4rem;
+        }
+
+        .chapter-btn {
+            position: relative;
+            border: 1px solid var(--glass-border);
+            border-radius: 4px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            overflow: hidden;
+            transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
+            text-align: left;
+            height: 160px;
+            display: flex; flex-direction: column; justify-content: flex-end;
+        }
+
+        .chapter-btn:hover {
+            border-color: rgba(200,200,212,0.35);
+            box-shadow: 0 6px 40px rgba(0,0,0,0.5), 0 0 20px var(--accent-glow);
+            transform: translateY(-3px);
+        }
+
+        .chapter-btn.active {
+            border-color: rgba(200,200,212,0.5);
+            box-shadow: 0 0 30px var(--accent-glow), inset 0 0 30px rgba(200,200,212,0.03);
+        }
+
+        /* Chapter image area */
+        .chapter-img {
+            position: absolute; inset: 0;
+            background-size: cover; background-position: center;
+            transition: transform 0.5s ease, opacity 0.3s;
+            opacity: 0.6;
+        }
+        .chapter-btn:hover .chapter-img,
+        .chapter-btn.active .chapter-img {
+            transform: scale(1.06);
+            opacity: 0.75;
+        }
+
+        /* Placeholder gradients per chapter */
+        .ch-img-1 { background: linear-gradient(145deg, #0d1117 0%, #1a1f35 40%, #0a2040 100%); }
+        .ch-img-2 { background: linear-gradient(145deg, #0f0f1a 0%, #1a2030 40%, #0d2535 100%); }
+        .ch-img-3 { background: linear-gradient(145deg, #0a1020 0%, #101828 40%, #0a1830 100%); }
+        .ch-img-4 { background: linear-gradient(145deg, #0d0d1a 0%, #181828 40%, #0f1535 100%); }
+        .ch-img-5 { background: linear-gradient(145deg, #101018 0%, #1a1a30 40%, #101530 100%); }
+        .ch-img-6 { background: linear-gradient(145deg, #0a0f18 0%, #151f30 40%, #0a1825 100%); }
+        .ch-img-7 { background: linear-gradient(145deg, #100d18 0%, #1e1828 40%, #150d30 100%); }
+        .ch-img-8 { background: linear-gradient(145deg, #0d1018 0%, #181e2e 40%, #0d1828 100%); }
+        .ch-img-9 { background: linear-gradient(145deg, #0f0d18 0%, #1c1828 40%, #120d30 100%); }
+        .ch-img-10 { background: linear-gradient(145deg, #0d1018 0%, #181f30 40%, #0a1530 100%); }
+
+        /* Overlay on chapter cards */
+        .chapter-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(8,8,16,0.92) 0%, rgba(8,8,16,0.4) 60%, transparent 100%);
+        }
+
+        .chapter-content {
+            position: relative; z-index: 1;
+            padding: 1rem 1.1rem 1rem;
+        }
+
+        .chapter-num {
+            font-size: 0.6rem; letter-spacing: 3px;
+            text-transform: uppercase; color: var(--silver-dim);
+            margin-bottom: 0.3rem;
+        }
+
+        .chapter-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.92rem; font-weight: 600;
+            color: var(--silver-bright);
+            line-height: 1.3;
+        }
+
+        .chapter-arrow {
+            position: absolute; top: 10px; right: 12px;
+            font-size: 0.7rem; color: var(--silver-dim);
+            transition: color 0.3s, transform 0.3s;
+        }
+        .chapter-btn.active .chapter-arrow { color: var(--silver-bright); transform: rotate(90deg); }
+
+        /* Page content panels */
+        .page-panel {
+            display: none;
+            animation: pageReveal 0.5s ease forwards;
+            margin-bottom: 2rem;
+        }
+
+        .page-panel.active { display: block; }
+
+        @keyframes pageReveal {
+            from { opacity: 0; transform: translateY(20px) rotateX(4deg); }
+            to { opacity: 1; transform: translateY(0) rotateX(0deg); }
+        }
+
+        .panel-inner {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 4px;
+            backdrop-filter: blur(16px);
+            overflow: hidden;
+            box-shadow: 0 8px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+
+        /* Panel hero image */
+        .panel-hero-img {
+            width: 100%; height: 240px;
+            background-size: cover; background-position: center;
+            position: relative;
+        }
+        .panel-hero-img::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(to bottom, transparent 20%, rgba(8,8,16,0.95) 100%);
+        }
+        .panel-hero-label {
+            position: absolute; bottom: 1.5rem; left: 2.5rem; z-index: 1;
+        }
+        .panel-hero-label .pnum {
+            font-size: 0.6rem; letter-spacing: 5px;
+            text-transform: uppercase; color: var(--silver-dim);
+        }
+        .panel-hero-label h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem; font-weight: 700;
+            color: var(--silver-bright);
+            text-shadow: 0 2px 20px rgba(0,0,0,0.8);
+        }
+
+        .panel-body { padding: 2.5rem; }
+
+        p { color: var(--silver-dim); line-height: 1.8; font-size: 0.92rem; font-weight: 300; margin-bottom: 1rem; }
+
+        /* Tool grid */
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px; margin-top: 1.5rem;
+        }
+        .tool-pill {
+            background: rgba(200,200,212,0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: 4px; padding: 1.4rem;
+            transition: background 0.3s, border-color 0.3s;
+        }
+        .tool-pill:hover { background: rgba(200,200,212,0.08); border-color: rgba(200,200,212,0.28); }
+        .tool-pill h3 { font-family: 'Playfair Display', serif; font-size: 0.95rem; color: var(--silver-bright); margin-bottom: 0.5rem; }
+        .tool-pill p { font-size: 0.82rem; margin: 0; }
+
+        /* Two col */
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; margin-top: 1rem; }
+        @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+        .two-col h3 { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--silver-bright); margin-bottom: 0.8rem; }
+        code { font-size: 0.78rem; color: var(--silver-dim); background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 3px; font-family: monospace; }
+
+        /* Tip list */
+        .tip-list { list-style: none; }
+        .tip-list li {
+            padding: 7px 0 7px 20px;
+            position: relative; font-size: 0.875rem; color: var(--silver-dim);
+            line-height: 1.6; border-bottom: 1px solid rgba(200,200,212,0.05);
+        }
+        .tip-list li:last-child { border-bottom: none; }
+        .tip-list li::before { content: '—'; position: absolute; left: 0; color: rgba(200,200,212,0.25); font-size: 0.7rem; top: 10px; }
+        .tip-list li strong { color: var(--silver); font-weight: 500; }
+
+        /* Close button */
+        .panel-close {
+            display: flex; align-items: center; gap: 8px;
+            background: none; border: 1px solid var(--glass-border);
+            border-radius: 3px; padding: 0.5rem 1rem;
+            color: var(--silver-dim); font-size: 0.72rem;
+            letter-spacing: 2px; text-transform: uppercase;
+            cursor: pointer; margin-top: 2rem;
+            transition: border-color 0.3s, color 0.3s;
+        }
+        .panel-close:hover { border-color: rgba(200,200,212,0.3); color: var(--silver); }
+
+        /* Footer */
+        footer { text-align: center; padding: 4rem 0 3rem; border-top: 1px solid var(--glass-border); margin-top: 2rem; }
+        footer p { font-family: 'Playfair Display', serif; font-size: 0.95rem; color: var(--silver-dim); font-style: italic; }
+        footer small { font-size: 0.65rem; letter-spacing: 4px; text-transform: uppercase; color: rgba(200,200,212,0.2); }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 3px; }
+
+        /* Image placeholder text */
+        .img-placeholder {
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase;
+            color: rgba(200,200,212,0.15); z-index: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="water-bg"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<nav>
+    <div class="brand">GHOST PROTOCOL</div>
+    <div class="nav-right">Field Manual &nbsp;·&nbsp; 80 Defenses</div>
+</nav>
+
+<div class="container">
+
+    <!-- Hero -->
+    <div class="hero">
+        <div class="hero-inner">
+            <div class="hero-label">Digital Security Field Manual</div>
+            <div class="hero-line"></div>
+            <h1>Total Digital<br>Obfuscation</h1>
+            <div class="hero-line"></div>
+            <p class="hero-sub">Select a chapter below to begin.</p>
+        </div>
+    </div>
+
+    <!-- Chapter Select -->
+    <div class="chapters-label">— Choose a Chapter —</div>
+
+    <div class="chapters-grid">
+
+        <button class="chapter-btn" onclick="openChapter('ch1', this)">
+            <div class="chapter-img ch-img-1" id="img-ch1-thumb" style="background-image: url('images/cyber/foundation.jpg');"></div>
+            <div class="chapter-overlay"></div>
+            <div class="chapter-content">
+                <div class="chapter-num">01</div>
+                <div class="chapter-title">Software Foundation</div>
+            </div>
+            <span class="chapter-arrow">›</span>
+        </button>
+
+        <button class="chapter-btn" onclick="openChapter('ch2', this)">
+            <div class="chapter-img ch-img-2" id="img-ch2-thumb" style="background-image: url('images/cyber/tracking.jpg');"></div>
+            <div class="chapter-overlay"></div>
+            <div class="chapter-content">
+                <div class="chapter-num">02</div>
+                <div class="chapter-title">Beyond Cookies</div>
+            </div>
+            <span class="chapter-arrow">›</span>
+        </button>
+
+        <button class="chapter-btn" onclick="openChapter('ch3', this)">
+            <div class="chapter-img ch-img-3" id="img-ch3-thumb" style="background-image: url('images/cyber/browser.jpg');"></div>
+            <div class="chapter-overlay"></div>
+            <div class="chapter-content">
+                <div class="chapter-num">03</div>
+                <div class="chapter-title">Browser Hardening</div>
+            </div>
+            <span class="chapter-arrow">›</span>
+        </button>
+
+        <button class="chapter-btn" onclick="openChapter('ch4', this)">
+            <div class="chapter-img ch-img-4" id="img-ch4-thumb" style="background-image: url('images/cyber/network.jpg');"></div>
+            <div class="chapter-overlay"></div>
+            <div class="chapter-content">
+                <div class="chapter-num">04</div>
+                <div class="chapter-title">Network &amp; Wi-Fi</div>
+            </div>
+            <span class="chapter-arrow">›</span>
+        </button>
+
+        <button class="chapter-btn" onclick="openChapter('ch5', this)">
+            <div class="chapter-img ch-img-5" id="img-ch5-thumb" style="background-image: url('images/cyber/passwords.jpg');"></div>
+            <div class="chapter-overlay"></div>
+            <div class="chapter-content">
+                <div class="chapter-num">05</div>
+                <div class="chapter-title">Accounts &amp; Passwords</div>
+            </div>
+            <span class="chapter-arrow">›</span>
+        </button>
+
+        <button class="chapter-btn" onclick="openChapter('ch6', this)">
+            <div class="chapter-img ch-img-6" id="img-ch6-thumb" style="background-image: url('images/cyber/device.jpg');"></div>
+            <div class="chapter-overlay"></div>
+            <div class="chapter-content">
+                <div class="chapter-num">06</div>
+                <div class="chapter-title">Device Hardening</div>
+            </div>
+            <span class="chapter-arrow">›</span>
+        </button>
+
+        <button class="chapter-btn" onclick="openChapter('ch7', this)">
+            <div class="chapter-img ch-img-7" id="img-ch7-thumb" style="background-image: url('images/cyber/databrokers.jpg');"></div>
+            <div class="chapter-overlay"></div>
+            <div class="chapter-content">
+                <div class="chapter-num">07</div>
+                <div class="chapter-title">Data Brokers</div>
+            </div>
+            <span class="chapter-arrow">›</span>
+        </button>
+
+        <button class="chapter-btn" onclick="openChapter('ch8', this)">
+            <div class="chapter-img ch-img-8" id="img-ch8-thumb" style="background-image: url('images/cyber/mobile.jpg');"></div>
+            <div class="chapter-overlay"></div>
+            <div class="chapter-content">
+                <div class="chapter-num">08</div>
+                <div class="chapter-title">Mobile Security</div>
+            </div>
+            <span class="chapter-arrow">›</span>
+        </button>
+
+        <button class="chapter-btn" onclick="openChapter('ch9', this)">
+            <div class="chapter-img ch-img-9" id="img-ch9-thumb" style="background-image: url('images/cyber/social.jpg');"></div>
+            <div class="chapter-overlay"></div>
+            <div class="chapter-content">
+                <div class="chapter-num">09</div>
+                <div class="chapter-title">Social &amp; Behavioral</div>
+            </div>
+            <span class="chapter-arrow">›</span>
+        </button>
+
+        <button class="chapter-btn" onclick="openChapter('ch10', this)">
+            <div class="chapter-img ch-img-10" id="img-ch10-thumb" style="background-image: url('images/cyber/financial.jpg');"></div>
+            <div class="chapter-overlay"></div>
+            <div class="chapter-content">
+                <div class="chapter-num">10</div>
+                <div class="chapter-title">Financial &amp; Physical</div>
+            </div>
+            <span class="chapter-arrow">›</span>
+        </button>
+
+    </div>
+
+    <!-- Content Panels -->
+    <div id="panels">
+
+        <!-- CH1 -->
+        <div class="page-panel" id="ch1">
+            <div class="panel-inner">
+                <div class="panel-hero-img ch-img-1" style="background-image: url('images/cyber/foundation.jpg');">
+                    <div class="img-placeholder">foundation.jpg</div>
+                    <div class="panel-hero-label">
+                        <div class="pnum">Section 01</div>
+                        <h2>Software Foundation</h2>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <p>Before applying behavioral changes, you must secure your gateway to the internet. These three tools form the bedrock of any serious privacy setup.</p>
+                    <div class="tool-grid">
+                        <div class="tool-pill">
+                            <h3>Brave Browser</h3>
+                            <p>Blocks fingerprinting, cross-site trackers, and ads out of the box. Built on Chromium, stripped of Google's telemetry.</p>
+                        </div>
+                        <div class="tool-pill">
+                            <h3>Tor Browser</h3>
+                            <p>The gold standard for anonymity. Routes traffic through 3 random nodes. Prevents traffic analysis at the network level.</p>
+                        </div>
+                        <div class="tool-pill">
+                            <h3>DuckDuckGo</h3>
+                            <p>A search engine that builds no profile on you. Escapes the filter bubble of manipulated search results.</p>
+                        </div>
+                    </div>
+                    <button class="panel-close" onclick="closeChapter('ch1')">✕ &nbsp;Close Chapter</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CH2 -->
+        <div class="page-panel" id="ch2">
+            <div class="panel-inner">
+                <div class="panel-hero-img ch-img-2" style="background-image: url('images/cyber/tracking.jpg');">
+                    <div class="img-placeholder">tracking.jpg</div>
+                    <div class="panel-hero-label">
+                        <div class="pnum">Section 02</div>
+                        <h2>Beyond Cookies</h2>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="two-col">
+                        <div>
+                            <h3>Photometric and Exif Data</h3>
+                            <p>Every photo contains hidden metadata embedded by your device:</p>
+                            <ul class="tip-list">
+                                <li><strong>GPS Coordinates</strong> — exact location where the photo was taken.</li>
+                                <li><strong>Device ID</strong> — the model and serial number of your camera.</li>
+                                <li><strong>Timestamp</strong> — validates your location at a precise moment.</li>
+                            </ul>
+                            <p style="margin-top:1rem; font-size:0.82rem;">Use <strong>Scrambled Exif</strong> (Android) or <strong>Metapho</strong> (iOS) to strip data before uploading.</p>
+                        </div>
+                        <div>
+                            <h3>Link Decoration Tracking</h3>
+                            <p>Marketers append UTM codes to links to track you across platforms.</p>
+                            <p>Example: <code>website.com?utm_source=facebook&user_id=12345</code></p>
+                            <p>Always delete everything after the <code>?</code> in a URL before sharing it.</p>
+                        </div>
+                    </div>
+                    <button class="panel-close" onclick="closeChapter('ch2')">✕ &nbsp;Close Chapter</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CH3 -->
+        <div class="page-panel" id="ch3">
+            <div class="panel-inner">
+                <div class="panel-hero-img ch-img-3" style="background-image: url('images/cyber/browser.jpg');">
+                    <div class="img-placeholder">browser.jpg</div>
+                    <div class="panel-hero-label">
+                        <div class="pnum">Section 03</div>
+                        <h2>Browser Hardening</h2>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <ul class="tip-list">
+                        <li><strong>1. Use Brave or Firefox</strong> — avoid pure Chrome.</li>
+                        <li><strong>2. Install uBlock Origin</strong> — the best ad and script blocker.</li>
+                        <li><strong>3. Install Privacy Badger</strong> — learns to block invisible trackers.</li>
+                        <li><strong>4. HTTPS Everywhere</strong> — force encrypted connections.</li>
+                        <li><strong>5. Disable Third-Party Cookies</strong> — in browser settings.</li>
+                        <li><strong>6. Clear Cookies on Exit</strong> — set browser to auto-wipe.</li>
+                        <li><strong>7. Strict Tracking Protection</strong> — enable in browser settings.</li>
+                        <li><strong>8. Disable WebRTC</strong> — prevents IP leaks through the browser.</li>
+                        <li><strong>9. Randomize User Agent</strong> — appear as a different device.</li>
+                        <li><strong>10. Sandbox Containers</strong> — isolate Facebook and Google tabs.</li>
+                        <li><strong>11. Disable Autofill</strong> — don't let browsers save addresses.</li>
+                        <li><strong>12. Turn Off Telemetry</strong> — opt out of all usage data.</li>
+                        <li><strong>13. Avoid Browser Password Managers</strong> — they are often targeted.</li>
+                    </ul>
+                    <button class="panel-close" onclick="closeChapter('ch3')">✕ &nbsp;Close Chapter</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CH4 -->
+        <div class="page-panel" id="ch4">
+            <div class="panel-inner">
+                <div class="panel-hero-img ch-img-4" style="background-image: url('images/cyber/network.jpg');">
+                    <div class="img-placeholder">network.jpg</div>
+                    <div class="panel-hero-label">
+                        <div class="pnum">Section 04</div>
+                        <h2>Network &amp; Wi-Fi</h2>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <ul class="tip-list">
+                        <li><strong>14. Use a Reputable VPN</strong> — Mullvad, ProtonVPN, or IVPN.</li>
+                        <li><strong>15. Avoid Free VPNs</strong> — they sell your data to pay for servers.</li>
+                        <li><strong>16. Use Tor for Sensitive Searches</strong> — onion routing for maximum privacy.</li>
+                        <li><strong>17. Change DNS Settings</strong> — use Cloudflare 1.1.1.1 or Quad9.</li>
+                        <li><strong>18. Enable DNS over HTTPS</strong> — encrypts your DNS requests.</li>
+                        <li><strong>19. Hide Wi-Fi SSID</strong> — make your home network invisible.</li>
+                        <li><strong>20. Guest Network for IoT</strong> — isolate smart devices on a separate network.</li>
+                        <li><strong>21. Disable UPnP</strong> — turn this off in your router settings.</li>
+                        <li><strong>22. Change Router Admin Credentials</strong> — never use admin/admin.</li>
+                        <li><strong>23. Disable Bluetooth When Idle</strong> — prevents beacon tracking.</li>
+                        <li><strong>24. Forget Old Wi-Fi Networks</strong> — prevents rogue hotspot connections.</li>
+                        <li><strong>25. MAC Address Randomization</strong> — enable in mobile Wi-Fi settings.</li>
+                    </ul>
+                    <button class="panel-close" onclick="closeChapter('ch4')">✕ &nbsp;Close Chapter</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CH5 -->
+        <div class="page-panel" id="ch5">
+            <div class="panel-inner">
+                <div class="panel-hero-img ch-img-5" style="background-image: url('images/cyber/passwords.jpg');">
+                    <div class="img-placeholder">passwords.jpg</div>
+                    <div class="panel-hero-label">
+                        <div class="pnum">Section 05</div>
+                        <h2>Accounts &amp; Passwords</h2>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <ul class="tip-list">
+                        <li><strong>26. Use a Password Manager</strong> — Bitwarden or KeePassXC.</li>
+                        <li><strong>27. Unique Passwords</strong> — never reuse a single password anywhere.</li>
+                        <li><strong>28. 2FA via TOTP App</strong> — use Aegis or Raivo, never SMS.</li>
+                        <li><strong>29. Hardware Keys</strong> — YubiKey for critical accounts like email and banking.</li>
+                        <li><strong>30. Passkeys</strong> — use biometric passkeys wherever supported.</li>
+                        <li><strong>31. Email Aliases</strong> — use SimpleLogin or Apple Hide My Email.</li>
+                        <li><strong>32. HaveIBeenPwned</strong> — regularly check if your email is in a breach.</li>
+                        <li><strong>33. Recovery Codes</strong> — print them and store them offline.</li>
+                        <li><strong>34. Fake Security Answers</strong> — lie on security questions. Save the lie in your manager.</li>
+                        <li><strong>35. Login Notifications</strong> — enable alerts for any new logins.</li>
+                        <li><strong>36. Close Old Accounts</strong> — reduce your attack surface by deleting unused accounts.</li>
+                    </ul>
+                    <button class="panel-close" onclick="closeChapter('ch5')">✕ &nbsp;Close Chapter</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CH6 -->
+        <div class="page-panel" id="ch6">
+            <div class="panel-inner">
+                <div class="panel-hero-img ch-img-6" style="background-image: url('images/cyber/device.jpg');">
+                    <div class="img-placeholder">device.jpg</div>
+                    <div class="panel-hero-label">
+                        <div class="pnum">Section 06</div>
+                        <h2>Device Hardening</h2>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <ul class="tip-list">
+                        <li><strong>37. Full Disk Encryption</strong> — BitLocker on Windows, FileVault on Mac.</li>
+                        <li><strong>38. Keep OS Updated</strong> — patch zero-day exploits immediately.</li>
+                        <li><strong>39. Use a Standard User Account</strong> — don't run as Admin daily.</li>
+                        <li><strong>40. Enable Firewall</strong> — built-in OS firewalls are highly effective.</li>
+                        <li><strong>41. Disable Location Services</strong> — globally or restrict per app.</li>
+                        <li><strong>42. Cover Your Webcam</strong> — physical sticker or slider cover.</li>
+                        <li><strong>43. Mic Lock</strong> — use a hardware blocker or software switch.</li>
+                        <li><strong>44. Remove Bloatware</strong> — uninstall all pre-loaded junk apps.</li>
+                        <li><strong>45. Disable Find My Device</strong> — if location privacy is critical to you.</li>
+                        <li><strong>46. Consider Linux</strong> — Mint or Fedora for significantly better privacy.</li>
+                        <li><strong>47. Windows Defender</strong> — sufficient protection if kept updated.</li>
+                    </ul>
+                    <button class="panel-close" onclick="closeChapter('ch6')">✕ &nbsp;Close Chapter</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CH7 -->
+        <div class="page-panel" id="ch7">
+            <div class="panel-inner">
+                <div class="panel-hero-img ch-img-7" style="background-image: url('images/cyber/databrokers.jpg');">
+                    <div class="img-placeholder">databrokers.jpg</div>
+                    <div class="panel-hero-label">
+                        <div class="pnum">Section 07</div>
+                        <h2>Data Brokers</h2>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <ul class="tip-list">
+                        <li><strong>48. Opt-Out Services</strong> — use DeleteMe or Incogni to scrub data brokers.</li>
+                        <li><strong>49. Manual Opt-Out</strong> — search your name and request removal yourself.</li>
+                        <li><strong>50. Fake Name for Deliveries</strong> — use a name variation for packages.</li>
+                        <li><strong>51. Burner Phones</strong> — prepaid SIM paid for with cash.</li>
+                        <li><strong>52. VoIP Numbers</strong> — Google Voice or MySudo for public-facing contacts.</li>
+                        <li><strong>53. Limit Birth Date Sharing</strong> — use Jan 1st on non-banking sites.</li>
+                        <li><strong>54. Monthly Privacy Audit</strong> — check Google Dashboard and Facebook settings.</li>
+                        <li><strong>55. Limit Sign in with Google</strong> — creates a dangerous central point of failure.</li>
+                        <li><strong>56. Freeze Your Credit</strong> — stop identity theft at the credit bureau level.</li>
+                    </ul>
+                    <button class="panel-close" onclick="closeChapter('ch7')">✕ &nbsp;Close Chapter</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CH8 -->
+        <div class="page-panel" id="ch8">
+            <div class="panel-inner">
+                <div class="panel-hero-img ch-img-8" style="background-image: url('images/cyber/mobile.jpg');">
+                    <div class="img-placeholder">mobile.jpg</div>
+                    <div class="panel-hero-label">
+                        <div class="pnum">Section 08</div>
+                        <h2>Mobile Security</h2>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <ul class="tip-list">
+                        <li><strong>57. Signal Messenger</strong> — end-to-end encrypted texts and calls.</li>
+                        <li><strong>58. Disappearing Messages</strong> — set all chats to auto-delete.</li>
+                        <li><strong>59. Disable Ad ID</strong> — reset or fully delete your Advertising ID.</li>
+                        <li><strong>60. Audit App Permissions</strong> — does a calculator need your contacts? No.</li>
+                        <li><strong>61. Hide Lock Screen Notifications</strong> — conceal message content from view.</li>
+                        <li><strong>62. 6-Digit or Alphanumeric PIN</strong> — 4 digits are too easy to brute force.</li>
+                        <li><strong>63. Scrambled PIN Pad</strong> — prevents shoulder surfing attacks.</li>
+                        <li><strong>64. Biometrics Caution</strong> — a password can't be legally forced; a fingerprint can.</li>
+                        <li><strong>65. GrapheneOS</strong> — consider a de-Googled Android operating system.</li>
+                        <li><strong>66. Faraday Bags</strong> — block all wireless signals when traveling.</li>
+                    </ul>
+                    <button class="panel-close" onclick="closeChapter('ch8')">✕ &nbsp;Close Chapter</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CH9 -->
+        <div class="page-panel" id="ch9">
+            <div class="panel-inner">
+                <div class="panel-hero-img ch-img-9" style="background-image: url('images/cyber/social.jpg');">
+                    <div class="img-placeholder">social.jpg</div>
+                    <div class="panel-hero-label">
+                        <div class="pnum">Section 09</div>
+                        <h2>Social &amp; Behavioral</h2>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <ul class="tip-list">
+                        <li><strong>67. Zero Trust</strong> — verify every link, even from trusted contacts.</li>
+                        <li><strong>68. Hover Links</strong> — check the real URL destination before clicking.</li>
+                        <li><strong>69. Caution with QR Codes</strong> — they can instantly route to malicious sites.</li>
+                        <li><strong>70. Callback Verification</strong> — if a bank calls you, hang up and call back on the official number.</li>
+                        <li><strong>71. Social Media Silence</strong> — never post vacation photos while you are still away.</li>
+                        <li><strong>72. Reverse Image Search</strong> — check regularly if your photos are being misused.</li>
+                        <li><strong>73. Scrub Metadata</strong> — remove Exif data from photos before posting online.</li>
+                        <li><strong>74. Be Boring Online</strong> — the less you stand out, the less you get targeted.</li>
+                        <li><strong>75. Compartmentalize</strong> — never link your gaming identity to your professional one.</li>
+                    </ul>
+                    <button class="panel-close" onclick="closeChapter('ch9')">✕ &nbsp;Close Chapter</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CH10 -->
+        <div class="page-panel" id="ch10">
+            <div class="panel-inner">
+                <div class="panel-hero-img ch-img-10" style="background-image: url('images/cyber/financial.jpg');">
+                    <div class="img-placeholder">financial.jpg</div>
+                    <div class="panel-hero-label">
+                        <div class="pnum">Section 10</div>
+                        <h2>Financial &amp; Physical</h2>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <ul class="tip-list">
+                        <li><strong>76. Virtual Credit Cards</strong> — use Privacy.com to generate merchant-specific card numbers.</li>
+                        <li><strong>77. Cash is King</strong> — physical cash leaves absolutely no digital trail.</li>
+                        <li><strong>78. RFID Wallet</strong> — block card skimmers in public places.</li>
+                        <li><strong>79. Shred Documents</strong> — cross-cut shred all mail before throwing it away.</li>
+                        <li><strong>80. Privacy Screen Filter</strong> — block visual hacking on your laptop and phone in public.</li>
+                    </ul>
+                    <button class="panel-close" onclick="closeChapter('ch10')">✕ &nbsp;Close Chapter</button>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /panels -->
+
+    <footer>
+        <p>Knowledge is the first line of defense. Implementation is the second.</p>
+        <br>
+        <small>Ghost Protocol &nbsp;&mdash;&nbsp; v2.0</small>
+    </footer>
+
+</div>
+
+<script>
+    let activeChapter = null;
+    let activeBtn = null;
+
+    function openChapter(id, btn) {
+        // If clicking active chapter, close it
+        if (activeChapter === id) {
+            closeChapter(id);
+            return;
+        }
+
+        // Close previous
+        if (activeChapter) {
+            document.getElementById(activeChapter).classList.remove('active');
+            if (activeBtn) activeBtn.classList.remove('active');
+        }
+
+        // Open new
+        activeChapter = id;
+        activeBtn = btn;
+        const panel = document.getElementById(id);
+        panel.classList.add('active');
+        btn.classList.add('active');
+
+        // Smooth scroll to panel
+        setTimeout(() => {
+            panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 80);
+    }
+
+    function closeChapter(id) {
+        document.getElementById(id).classList.remove('active');
+        if (activeBtn) activeBtn.classList.remove('active');
+        activeChapter = null;
+        activeBtn = null;
+        // Scroll back to chapter grid
+        document.querySelector('.chapters-grid').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // Subtle water parallax
+    document.addEventListener('mousemove', (e) => {
+        const x = (e.clientX / window.innerWidth - 0.5) * 10;
+        const y = (e.clientY / window.innerHeight - 0.5) * 6;
+        document.querySelector('.water-bg').style.transform = `translate(${x}px, ${y}px)`;
+    });
+</script>
+
+</body>
+</html>
